@@ -1,0 +1,152 @@
+// MyIDL.idl
+// IDL file for the Simple Com object
+
+#include "dispids.h"
+
+[
+	uuid(968ABB31-0F6A-4756-B55D-42A3E83239D6),
+	helpstring(""),
+	version(1.0)
+]
+library MonoHandler
+{
+	importlib("stdole32.tlb");
+	[
+		uuid(60E95CA2-0E21-45be-8258-67A576D589BD),
+		helpstring("Interface")
+	]
+	dispinterface IMonoHandler
+	{
+	properties:
+		[id(DISPID_CurrentWavelength)]
+		double			CurrentWavelength;
+		[id(DISPID_AutoGrating)]
+		VARIANT_BOOL	AutoGrating;
+		[id(DISPID_CurrentGrating)]
+		long			CurrentGrating;
+		[id(DISPID_MonoProgID)]
+		BSTR			MonoProgID;
+		[id(DISPID_AmBusy), readonly]
+		VARIANT_BOOL	AmBusy;
+		[id(DISPID_NumberOfGratings), readonly]
+		long			NumberOfGratings;
+		[id(DISPID_AmInitialized)]
+		VARIANT_BOOL	AmInitialized;
+	methods:
+		[id(DISPID_GratingParams), propget, helpstring("Grating parameters")]
+		VARIANT			GratingParams(
+							[in]			long				grating,
+							[in]			short				ParamIndex);
+		[id(DISPID_GratingParams), propput, helpstring("Grating parameters")]
+		void			GratingParams(
+							[in]			long				grating,
+							[in]			short				ParamIndex,
+							[in]			VARIANT				gratingParams);
+		[id(DISPID_MonoParams), propget, helpstring("Get a monochromator parameter")]
+		VARIANT			MonoParams(
+							[in]			short				paramIndex);
+		[id(DISPID_MonoParams), propput, helpstring("Set a monochromator parameter")]
+		void			MonoParams(
+							[in]			short				paramIndex,
+							[in]			VARIANT				Value);
+		[id(DISPID_IsValidPosition), helpstring("Is the entered position (in nanometers) valid?")]
+		VARIANT_BOOL	IsValidPosition(
+							[in]			double				position);
+		[id(DISPID_Home), helpstring("Home the monochromator")]
+		void			Home();
+		[id(DISPID_ConvertStepsToNM), helpstring("Convert between steps and nanometers")]
+		VARIANT_BOOL	ConvertStepsToNM(	
+							[in]			VARIANT_BOOL		fStepsToNM,
+							[in]			long				gratingID,
+							[in, out]		long			*	steps,
+							[in, out]		double			*	nm);
+		[id(DISPID_DisplayConfigValues), helpstring("Display config values")]
+		void			DisplayConfigValues();
+		[id(DISPID_DoSetup), helpstring("Open the setup window")]
+		void			DoSetup();
+		[id(DISPID_ReadConfig), helpstring("Read the configuration file")]
+		VARIANT_BOOL	ReadConfig(
+							[in]			BSTR				ConfigFile);
+		[id(DISPID_ReadIni), helpstring("Read the initialization file")]
+		VARIANT_BOOL	ReadIni(
+							[in]			BSTR				iniFile);
+		[id(DISPID_SetGratingParams), helpstring("Set the grating parameters")]
+		VARIANT_BOOL	SetGratingParams();
+		[id(DISPID_WriteConfig), helpstring("Write to the configuration file")]
+		void			WriteConfig(
+							[in]			BSTR				ConfigFile);
+		[id(DISPID_WriteIni), helpstring("Write to the ini file")]
+		void			WriteIni(
+							[in]			BSTR				IniFile);
+		[id(DISPID_GetGratingDispersion), helpstring("Calculate grating dispersion for one mono")]
+		double			GetGratingDispersion(
+							[in]			long				grating);
+		[id(DISPID_DisplayWaveControl), helpstring("Display the wavelength control window")]
+		void			DisplayWaveControl(
+							[in]			long			hwndParent);
+		[id(DISPID_StartScan), helpstring("Start scan actions")]
+		void			StartScan();
+	}
+	[
+		uuid(70754D1C-F5B2-44a3-8C70-3792D641429F),
+		helpstring(" event interface")
+	]
+	dispinterface _MonoHandler
+	{
+	properties:
+	methods:
+		[id(DISPID_GratingChanged), helpstring("Grating has changed")]
+		void			GratingChanged(
+							[in]			long				newGrating);
+		[id(DISPID_BeforeMoveChange), helpstring("Event fired prior to mono moving")]
+		void			BeforeMoveChange(
+							[in]			double				newPosition,
+							[in, out]		VARIANT_BOOL	*	fAllowChange);
+		[id(DISPID_HaveAborted), helpstring("Have aborted the last move")]
+		void			HaveAborted();
+		[id(DISPID_MoveCompleted), helpstring("Move completed")]
+		void			MoveCompleted(
+							[in]			long				currentPosition);
+		[id(DISPID_MoveError), helpstring("Move error")]
+		void			MoveError(
+							[in]			BSTR				MoveError);
+		[id(DISPID_QueryAllowChangeZeroOffset), helpstring("Ask if zero offset change is allowed")]
+		void			QueryAllowChangeZeroOffset(
+							[out]			VARIANT_BOOL	*	fAllow);
+		[id(DISPID_QueryScanningStatus), helpstring("Query the scanning status")]
+		void			QueryScanningStatus(
+							[out]			VARIANT_BOOL	*	pfScanning);
+		[id(DISPID_RequestChangeGrating), helpstring("Attempt to change the grating")]
+		void			RequestChangeGrating(
+							[in]			long				newGrating,
+							[in, out]		VARIANT_BOOL	*	fHandled);
+		[id(DISPID_RequestConfigFile), helpstring("Request the configuration file")]
+		void			RequestConfigFile(
+							[in, out]		BSTR			*	pConfiguratFile);
+		[id(DISPID_RequestIniFile), helpstring("Request the initialization file")]
+		void			RequestIniFile(
+							[in, out]		BSTR			*	pIniFile);
+		[id(DISPID_RequestParentWindow), helpstring("Ask for parent window")]
+		void			RequestParentWindow(
+							[out]			long			*	hwndParent);
+		[id(DISPID_StatusMessage), helpstring("Ask client to display a message")]
+		void			StatusMessage(
+							[in]			BSTR				statusMessage,
+							[in]			VARIANT_BOOL		fAmBusy);
+		[id(DISPID_RequestCurrentSignal), helpstring("Ask client for current signal")]
+		void			RequestCurrentSignal(
+							[out]			double			*	signal,
+							[out]			double			*	minSignal,
+							[out]			double			*	maxSignal,
+							[out]			VARIANT_BOOL	*	handled);
+	}
+	[
+		uuid(99581CC8-7944-43e8-801B-951B1624BEE5),
+		helpstring("class")
+	]
+	coclass MonoHandler
+	{
+		[default]				dispinterface			IMonoHandler;
+		[default, source]		dispinterface			_MonoHandler;
+	}
+}
