@@ -53,7 +53,7 @@ BOOL CMyIMono::doInit(
 	IUnknown		*	pUnkSink;
 	size_t				slen, slen2;
 	LPTSTR				szRem;
-//	CDateCheck			dateCheck;
+	CDateCheck			dateCheck;
 
 //	if (!dateCheck.MyDateCheck())
 //	{
@@ -81,9 +81,19 @@ BOOL CMyIMono::doInit(
 	if (SUCCEEDED(hr))
 	{
 		hr = CoCreateInstance(clsid, NULL, CLSCTX_INPROC_SERVER, IID_IUnknown, (LPVOID*) &punk);
+		if (FAILED(hr))
+		{
+			hr = CLSIDFromProgID(L"Sciencetech.DummyMono.1", &clsid);
+			if (SUCCEEDED(hr))
+			{
+				StringCchCopy(this->m_szProgID, MAX_PATH, L"Sciencetech.DummyMono.1");
+			}
+
+		}
 	}
 	if (SUCCEEDED(hr))
 	{
+  
 		hr = ::GetNamedInterface(punk, TEXT("_clsIMono"), &(this->m_pdisp));
 		punk->Release();
 	}
